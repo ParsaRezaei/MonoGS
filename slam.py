@@ -4,6 +4,13 @@ import time
 from argparse import ArgumentParser
 from datetime import datetime
 
+# CRITICAL: Set spawn method BEFORE importing torch to avoid CUDA fork issues
+import multiprocessing as mp_builtin
+try:
+    mp_builtin.set_start_method("spawn")
+except RuntimeError:
+    pass  # Already set
+
 import torch
 import torch.multiprocessing as mp
 import yaml
@@ -206,7 +213,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args(sys.argv[1:])
 
-    mp.set_start_method("spawn")
+    # spawn method is already set at top of file
 
     with open(args.config, "r") as yml:
         config = yaml.safe_load(yml)
